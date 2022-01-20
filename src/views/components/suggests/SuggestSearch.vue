@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="suggests__search">
     <FormInput
       :model.sync="search"
       :is-valid="validation"

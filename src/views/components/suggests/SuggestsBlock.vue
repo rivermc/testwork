@@ -1,5 +1,5 @@
 <template>
-  <div class="suggests">
+  <div class="suggests-block">
     <template v-if="suggests.length">
       <template v-for="(suggest, i) in suggests">
         <Suggest
@@ -10,7 +10,7 @@
       </template>
     </template>
     <template v-else>
-      <p class="suggests__notify">По Вашему запросу ничего не найдено</p>
+      <p class="suggests-block__notify">По Вашему запросу ничего не найдено</p>
     </template>
   </div>
 </template>
@@ -33,7 +33,7 @@ export default {
 <style lang="scss" scoped>
 @import './../../../assets/styles/variable.scss';
 
-.suggests {
+.suggests-block {
   border: 1px solid $color-gray;
   display: inline-block;
   max-height: 250px;

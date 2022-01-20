@@ -16,19 +16,22 @@ export default {
 <style lang="scss">
 @import './assets/styles/variable';
 
-* {
-  box-sizing: border-box;
-}
 #app {
   max-width: 500px;
   margin: 100px auto;
-  .color-red {
-    color: red;
+
+  * {
+    box-sizing: border-box;
   }
-  .fade-enter-active, .fade-leave-active {
+
+  .color--red {
+    color: $color-red;
+  }
+
+  .fade-enter-active {
     transition: opacity .5s;
   }
-  .fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
+  .fade-enter, .fade-leave-to {
     opacity: 0;
   }
 }

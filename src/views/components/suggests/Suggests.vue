@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="suggests">
     <SuggestSearch
       :url="url"
       :label="label"
@@ -33,7 +33,7 @@ export default {
       suggest: null,
       isShowSuggests: null,
       url: 'https://habr.com/kek/v2/publication/suggest-mention',
-      label: '<span class="color-red">*</span> Пользователь или компания',
+      label: '<span class="color--red">*</span> Пользователь или компания',
       placeholder: 'Введите имя пользователя или компании',
     }
   },
@@ -69,3 +69,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.suggests {
+  position: relative;
+}
+</style>

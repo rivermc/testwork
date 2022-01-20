@@ -20,6 +20,9 @@ export default {
 .loader {
   text-align: center;
   padding: 10px;
+  position: absolute;
+  width: 100%;
+  left: 0;
 
   &__image {
     width: 25px;
