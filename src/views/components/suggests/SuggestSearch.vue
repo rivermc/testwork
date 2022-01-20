@@ -16,16 +16,18 @@
         />
       </template>
     </FormInput>
+    <Loader :is-loading="isLoading" />
   </div>
 </template>
 
 <script>
 import { FormInput, FormInputTag } from '@/views/components/form/'
+import Loader from '@/views/components/loader/Loader.vue'
 
 export default {
   name: 'SuggestSearch',
   emits: ['update:data', 'delete:tag'],
-  components: { FormInput, FormInputTag },
+  components: { FormInput, FormInputTag, Loader },
   props: {
     url: {
       type: String,
@@ -49,7 +51,8 @@ export default {
       search: '',
       error: null,
       throttlePause: null,
-      xhr: new XMLHttpRequest()
+      xhr: new XMLHttpRequest(),
+      isLoading: false,
     }
   },
   computed: {
@@ -69,8 +72,12 @@ export default {
 
     getData() {
       this.error = null
-      if (!this.validation) { return }
-      this.xhr.open('GET', `${this.url}?q=${this.search}`);
+      if (!this.validation) {
+        this.$emit('update:data', null)
+        return
+      }
+      this.isLoading = true
+      this.xhr.open('GET', `${this.url}?q=${this.search}`)
       this.xhr.onload = () => {
         if (this.xhr.status === 200) {
           const res = JSON.parse(this.xhr.response)
@@ -79,6 +86,7 @@ export default {
         else {
           this.error = `Ошибка ${this.xhr.status}: ${this.xhr.statusText}`
         }
+        this.isLoading = false
       };
       this.xhr.send()
     },

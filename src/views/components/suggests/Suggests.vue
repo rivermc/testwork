@@ -9,13 +9,11 @@
       @delete:tag="onDelete"
     />
     <transition name="fade">
-      <keep-alive>
-        <SuggestsBlock
-          v-if="isShowSuggests"
-          :suggests="suggests"
-          @select:suggest="onSelect"
-        />
-      </keep-alive>
+      <SuggestsBlock
+        v-if="isShowSuggests"
+        :suggests="suggests"
+        @select:suggest="onSelect"
+      />
     </transition>
   </div>
 </template>
@@ -49,8 +47,16 @@ export default {
   },
   methods: {
     onSetData(data) {
-      this.collection.set(data)
+      if (data === null) {
+        this.isShowSuggests = false
+        return
+      }
       this.isShowSuggests = true
+      if (data?.length) {
+        this.collection.set(data)
+        return
+      }
+      this.collection = new SuggestsCollection()
     },
     onSelect(suggest) {
       this.suggest = suggest

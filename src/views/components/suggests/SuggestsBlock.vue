@@ -1,11 +1,16 @@
 <template>
-  <div v-if="suggests.length" class="suggests">
-    <template v-for="(suggest, i) in suggests">
-      <Suggest
-        :suggest="suggest"
-        :key="i + suggest.alias"
-        @select:suggest="$emit('select:suggest', $event)"
-      />
+  <div class="suggests">
+    <template v-if="suggests.length">
+      <template v-for="(suggest, i) in suggests">
+        <Suggest
+          :suggest="suggest"
+          :key="i + suggest.alias"
+          @select:suggest="$emit('select:suggest', $event)"
+        />
+      </template>
+    </template>
+    <template v-else>
+      <p class="suggests__notify">По Вашему запросу ничего не найдено</p>
     </template>
   </div>
 </template>
@@ -38,5 +43,10 @@ export default {
   -ms-overflow-style: none;
   scrollbar-width: none;
   &::-webkit-scrollbar { width: 0; }
+
+  &__notify {
+    padding: 0 10px;
+    font-size: 14px;
+  }
 }
 </style>
