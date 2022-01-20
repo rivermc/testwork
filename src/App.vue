@@ -1,10 +1,6 @@
 <template>
   <div id="app">
-    <Suggests
-      :url="url"
-      :label="label"
-      :placeholder="placeholder"
-    />
+    <Suggests />
   </div>
 </template>
 
@@ -14,17 +10,12 @@ import Suggests from '@/views/components/suggests/Suggests.vue'
 export default {
   name: 'App',
   components: { Suggests },
-  data() {
-    return {
-      url: 'https://habr.com/kek/v2/publication/suggest-mention',
-      label: '<span class="color-red">*</span> Пользователь или компания',
-      placeholder: 'Введите имя пользователя или компании',
-    }
-  },
 }
 </script>
 
 <style lang="scss">
+@import './assets/styles/variable';
+
 * {
   box-sizing: border-box;
 }

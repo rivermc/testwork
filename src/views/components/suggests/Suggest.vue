@@ -19,31 +19,33 @@ export default {
   name: 'Suggest',
   emits: ['select:suggest'],
   props: {
-    item: {
+    suggest: {
       type: Suggest,
       required: true,
     }
   },
   computed: {
     avatar() {
-      return this.item.avatar || require('@/assets/logo.png')
+      return this.suggest.avatar || require('@/assets/logo.png')
     },
     name() {
-      return this.item.name || `@${this.item.alias}`
+      return this.suggest.name || `@${this.suggest.alias}`
     },
     alias() {
-      return this.item.type === 'user' ? this.item.name ? `@${this.item.alias}`: '' : 'Компания'
+      return this.suggest.type === 'user' ? this.suggest.name ? `@${this.suggest.alias}`: '' : 'Компания'
     }
   },
   methods: {
     onClick() {
-      this.$emit('select:suggest', this.item)
+      this.$emit('select:suggest', this.suggest)
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+@import './../../../assets/styles/variable.scss';
+
 .suggest {
   display: flex;
   align-items: center;
@@ -51,7 +53,7 @@ export default {
   cursor: pointer;
 
   &:hover {
-    background: #ddd;
+    background: $color-gray;
   }
 
   &__image {
@@ -70,7 +72,7 @@ export default {
 
     &-alias {
       margin: 0;
-      color: #4e4e4e;
+      color: $color-gray-dark;
     }
   }
 }

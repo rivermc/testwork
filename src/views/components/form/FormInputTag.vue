@@ -25,23 +25,25 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import './../../../assets/styles/variable.scss';
+
 .form {
   &__tags {
-    border: 1px solid #ddd;
+    border: 1px solid $color-gray;
+    background: $color-white;
+    display: flex;
+    align-items: center;
     border-radius: 5px;
-    background: #fff;
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    display: flex;
-    align-items: center;
   }
 
   &__tag {
-    color: #fff;
-    background: #7ca5b5;
+    color: $color-white;
+    background: $color-blue;
     padding: 5px;
     border-radius: 2px;
     font-size: 12px;

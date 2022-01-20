@@ -16,6 +16,8 @@
       />
       <slot name="tags" />
     </div>
+    <p v-if="!isValid" class="form__input-error">{{ 'Некорректное значение' }}</p>
+    <p v-if="error" class="form__input-error">{{ error }}</p>
   </div>
 </template>
 
@@ -43,6 +45,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    error: {
+      type: String,
+      default: null,
+    },
   },
   computed: {
     value: {
@@ -59,9 +65,11 @@ export default {
 
 
 <style lang="scss" scoped>
+@import './../../../assets/styles/variable.scss';
+
 .form {
   &__group {
-    border: 1px solid #ddd;
+    border: 1px solid $color-gray;
     padding: 5px;
   }
 
@@ -72,17 +80,24 @@ export default {
   }
 
   &__input {
-    border: 1px solid #ddd;
+    border: 1px solid $color-gray;
     width: 100%;
     padding: 10px 5px;
     border-radius: 5px;
+    outline: none;
 
     &-group {
       position: relative;
     }
 
+    &-error {
+      color: $color-red;
+      font-size: 12px;
+      margin: 5px 0 0;
+    }
+
     &--error {
-      border-color: red;
+      border-color: $color-red;
     }
   }
 }

@@ -12,7 +12,7 @@
       <keep-alive>
         <SuggestsBlock
           v-if="isShowSuggests"
-          :items="items"
+          :suggests="suggests"
           @select:suggest="onSelect"
         />
       </keep-alive>
@@ -28,30 +28,19 @@ import SuggestSearch from '@/views/components/suggests/SuggestSearch.vue'
 export default {
   name: 'Suggest',
   components: { SuggestsBlock, SuggestSearch },
-  props: {
-    url: {
-      type: String,
-      default: ''
-    },
-    label: {
-      type: String,
-      default: ''
-    },
-    placeholder: {
-      type: String,
-      default: ''
-    },
-  },
   data() {
     return {
       search: '',
       collection: new SuggestsCollection(),
       suggest: null,
       isShowSuggests: null,
+      url: 'https://habr.com/kek/v2/publication/suggest-mention',
+      label: '<span class="color-red">*</span> Пользователь или компания',
+      placeholder: 'Введите имя пользователя или компании',
     }
   },
   computed: {
-    items() {
+    suggests() {
       return this.collection.asArray()
     },
     tags() {

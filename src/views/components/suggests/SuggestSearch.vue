@@ -1,19 +1,22 @@
 <template>
-  <FormInput
-    :model.sync="search"
-    :is-valid="validation"
-    :label="label"
-    :placeholder="placeholder"
-    @update:model="onSearch"
-  >
-    <template #tags>
-      <FormInputTag
-        v-if="tags"
-        :value="tags"
-        @delete:tag="onDelete"
-      />
-    </template>
-  </FormInput>
+  <div>
+    <FormInput
+      :model.sync="search"
+      :is-valid="validation"
+      :error="error"
+      :label="label"
+      :placeholder="placeholder"
+      @update:model="onSearch"
+    >
+      <template #tags>
+        <FormInputTag
+          v-if="tags"
+          :value="tags"
+          @delete:tag="onDelete"
+        />
+      </template>
+    </FormInput>
+  </div>
 </template>
 
 <script>
@@ -44,13 +47,14 @@ export default {
   data() {
     return {
       search: '',
+      error: null,
       throttlePause: null,
       xhr: new XMLHttpRequest()
     }
   },
   computed: {
     validation() {
-      const regexp = /^[a-zA-Z0-9]*$/i;
+      const regexp = /^[а-яА-Яa-zA-Z0-9]*$/i;
       return this.search.length > 2 && regexp.test(this.search)
     }
   },
@@ -58,34 +62,34 @@ export default {
     onDelete() {
       this.$emit('delete:tag')
     },
+
     onSearch() {
-      this.getData()
+      this.throttle(this.getData, 500)
     },
 
     getData() {
+      this.error = null
       if (!this.validation) { return }
-
       this.xhr.open('GET', `${this.url}?q=${this.search}`);
       this.xhr.onload = () => {
-        if (this.xhr.status !== 200) { // анализируем HTTP-статус ответа, если статус не 200, то произошла ошибка
-          console.log(`Ошибка ${this.xhr.status}: ${this.xhr.statusText}`); // Например, 404: Not Found
-        }
-        else { // если всё прошло гладко, выводим результат
+        if (this.xhr.status === 200) {
           const res = JSON.parse(this.xhr.response)
           this.$emit('update:data', res.data)
+        }
+        else {
+          this.error = `Ошибка ${this.xhr.status}: ${this.xhr.statusText}`
         }
       };
       this.xhr.send()
     },
 
-    throttle(callback, time) {
-      console.log(callback.call())
-      if (throttlePause) return;
-      let throttlePause = true;
+    throttle(cb, ms) {
+      if (this.throttlePause) return
+      this.throttlePause = true
       setTimeout(() => {
-        callback.call();
-        throttlePause = false;
-      }, time);
+        cb.call(this)
+        this.throttlePause = false
+      }, ms)
     },
   }
 }

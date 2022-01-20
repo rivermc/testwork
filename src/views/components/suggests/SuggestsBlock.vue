@@ -1,9 +1,9 @@
 <template>
-  <div v-if="items.length" class="suggests">
-    <template v-for="(item, i) in items">
+  <div v-if="suggests.length" class="suggests">
+    <template v-for="(suggest, i) in suggests">
       <Suggest
-        :item="item"
-        :key="i + item.alias"
+        :suggest="suggest"
+        :key="i + suggest.alias"
         @select:suggest="$emit('select:suggest', $event)"
       />
     </template>
@@ -17,7 +17,7 @@ export default {
   name: 'SuggestsBlock',
   components: { Suggest },
   props: {
-    items: {
+    suggests: {
       type: Array,
       required: true,
     }
@@ -26,17 +26,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import './../../../assets/styles/variable.scss';
+
 .suggests {
-  margin: 5px 0;
+  border: 1px solid $color-gray;
   display: inline-block;
-  border: 1px solid #ddd;
   max-height: 250px;
   min-width: 50%;
   overflow: auto;
+  margin: 5px 0;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  &::-webkit-scrollbar {
-    width: 0;
-  }
+  &::-webkit-scrollbar { width: 0; }
 }
 </style>
