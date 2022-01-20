@@ -1,28 +1,44 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Suggests
+      :url="url"
+      :label="label"
+      :placeholder="placeholder"
+    />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Suggests from '@/views/components/suggests/Suggests.vue'
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
-  }
+  components: { Suggests },
+  data() {
+    return {
+      url: 'https://habr.com/kek/v2/publication/suggest-mention',
+      label: '<span class="color-red">*</span> Пользователь или компания',
+      placeholder: 'Введите имя пользователя или компании',
+    }
+  },
 }
 </script>
 
-<style>
+<style lang="scss">
+* {
+  box-sizing: border-box;
+}
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  max-width: 500px;
+  margin: 100px auto;
+  .color-red {
+    color: red;
+  }
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
+    opacity: 0;
+  }
 }
 </style>
