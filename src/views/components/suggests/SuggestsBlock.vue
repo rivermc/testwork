@@ -6,6 +6,7 @@
           :suggest="suggest"
           :key="i + suggest.alias"
           @select:suggest="$emit('select:suggest', $event)"
+          @multiselect:suggest="$emit('multiselect:suggest', $event)"
         />
       </template>
     </template>
@@ -20,6 +21,7 @@ import Suggest from '@/views/components/suggests/Suggest.vue'
 
 export default {
   name: 'SuggestsBlock',
+  emits: ['select:suggest', 'multiselect:suggest'],
   components: { Suggest },
   props: {
     suggests: {

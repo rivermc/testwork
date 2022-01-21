@@ -16,7 +16,7 @@
       />
       <slot name="tags" />
     </div>
-    <p v-if="!isValid" class="form__input-error">{{ 'Некорректное значение' }}</p>
+    <p v-if="!isValid" class="form__input-error">Некорректное значение</p>
     <p v-if="error" class="form__input-error">{{ error }}</p>
   </div>
 </template>
@@ -24,6 +24,7 @@
 <script>
 export default {
   name: 'FormInput',
+  emits: ['update:model'],
   props: {
     id: {
       type: String,

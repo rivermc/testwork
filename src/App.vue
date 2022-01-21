@@ -1,6 +1,20 @@
 <template>
   <div id="app" role="main">
     <Suggests />
+    <div class="instruction">
+      <h3>Keyboard Control</h3>
+      <ul>
+        <li>Tab - Next Element</li>
+        <li>Shift Tab - Previous Element</li>
+        <li>Enter - Select</li>
+        <li>Ctrl Enter - Multiply Select</li>
+      </ul>
+      <h3>Mouse Control</h3>
+      <ul>
+        <li>Click - Select</li>
+        <li>Ctrl Click - Multiply Select</li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -18,7 +32,7 @@ export default {
 
 #app {
   max-width: 500px;
-  margin: 100px auto;
+  margin: 20px auto;
 
   * {
     box-sizing: border-box;

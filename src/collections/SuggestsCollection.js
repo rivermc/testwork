@@ -14,7 +14,7 @@ export default class SuggestsCollection {
   }
 
   asArray() {
-    return this._collection.map((item) => item);
+    return this._collection;
   }
 
   get length() {

@@ -13,6 +13,7 @@
         v-if="isShowSuggests"
         :suggests="suggests"
         @select:suggest="onSelect"
+        @multiselect:suggest="onMultiSelect"
       />
     </transition>
   </div>
@@ -35,7 +36,8 @@ export default {
       url: 'https://habr.com/kek/v2/publication/suggest-mention',
       label: '<span class="color--red">*</span> Пользователь или компания',
       placeholder: 'Введите имя пользователя или компании',
-      param: 'q'
+      param: 'q',
+      tagsList: [],
     }
   },
   computed: {
@@ -43,7 +45,7 @@ export default {
       return this.collection.asArray()
     },
     tags() {
-      return this.suggest ? this.suggest.alias : ''
+      return this.tagsList.length ? this.tagsList : []
     },
   },
   methods: {
@@ -60,11 +62,17 @@ export default {
       this.collection = new SuggestsCollection()
     },
     onSelect(suggest) {
-      this.suggest = suggest
       this.isShowSuggests = false
+      this.tagsList = [suggest]
     },
-    onDelete() {
-      this.suggest = null
+    onMultiSelect(suggest) {
+      const check = this.tagsList.find((item) => item.alias === suggest.alias)
+      if (!check) {
+        this.tagsList.push(suggest)
+      }
+    },
+    onDelete(i) {
+      this.tagsList.splice(i, 1)
       this.isShowSuggests = true
     },
   }

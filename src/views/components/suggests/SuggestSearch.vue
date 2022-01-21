@@ -15,8 +15,8 @@
     >
       <template #tags>
         <FormInputTag
-          v-if="tags"
-          :value="tags"
+          v-if="tags.length"
+          :tags="tags"
           @delete:tag="onDelete"
         />
       </template>
@@ -51,7 +51,7 @@ export default {
       default: 'q'
     },
     tags: {
-      type: String,
+      type: Array,
       default: null
     }
   },
@@ -74,8 +74,8 @@ export default {
     }
   },
   methods: {
-    onDelete() {
-      this.$emit('delete:tag')
+    onDelete(i) {
+      this.$emit('delete:tag', i)
     },
 
     onSearch() {

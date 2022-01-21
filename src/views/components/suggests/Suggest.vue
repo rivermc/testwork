@@ -4,8 +4,10 @@
     class="suggest"
     role="listitem"
     tabindex="0"
-    @keydown.enter="onClick"
-    @click="onClick"
+    @keydown.enter.exact="onClick"
+    @keydown.enter.ctrl="onCtrlClick"
+    @click.exact="onClick"
+    @click.ctrl="onCtrlClick"
   >
     <img
       :src="avatar"
@@ -45,6 +47,9 @@ export default {
   methods: {
     onClick() {
       this.$emit('select:suggest', this.suggest)
+    },
+    onCtrlClick() {
+      this.$emit('multiselect:suggest', this.suggest)
     }
   }
 }
