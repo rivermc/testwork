@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" role="main">
     <Suggests />
   </div>
 </template>
@@ -22,6 +22,10 @@ export default {
 
   * {
     box-sizing: border-box;
+
+    &:focus {
+      outline: 2px solid $color-blue;
+    }
   }
 
   .color--red {

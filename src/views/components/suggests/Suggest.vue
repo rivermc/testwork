@@ -1,5 +1,12 @@
 <template>
-  <div class="suggest" @click="onClick">
+  <div
+    :aria-label="name"
+    class="suggest"
+    role="listitem"
+    tabindex="0"
+    @keydown.enter="onClick"
+    @click="onClick"
+  >
     <img
       :src="avatar"
       :alt="name"

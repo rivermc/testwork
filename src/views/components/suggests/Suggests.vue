@@ -35,6 +35,7 @@ export default {
       url: 'https://habr.com/kek/v2/publication/suggest-mention',
       label: '<span class="color--red">*</span> Пользователь или компания',
       placeholder: 'Введите имя пользователя или компании',
+      param: 'q'
     }
   },
   computed: {

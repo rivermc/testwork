@@ -1,6 +1,12 @@
 <template>
   <div class="form__tags">
-    <div class="form__tag">
+    <div
+      :aria-label="`@${value}`"
+      class="form__tag"
+      tabindex="0"
+      role="button"
+      @keydown.enter="onDelete"
+    >
       {{ `@${value}` }}
       <span class="form__tag-close" @click="onDelete">x</span>
     </div>

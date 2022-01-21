@@ -1,5 +1,5 @@
 <template>
-  <div class="suggests-block">
+  <div class="suggests-block" role="list">
     <template v-if="suggests.length">
       <template v-for="(suggest, i) in suggests">
         <Suggest
