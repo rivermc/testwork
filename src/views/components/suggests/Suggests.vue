@@ -5,12 +5,14 @@
       :label="label"
       :placeholder="placeholder"
       :tags="tags"
+      :status.sync="status"
       @update:data="onSetData"
       @delete:tag="onDelete"
     />
+    <Loader :is-loading="status === 'loading'" />
     <transition name="fade">
       <SuggestsBlock
-        v-if="isShowSuggests"
+        v-if="status === 'ready'"
         :suggests="suggests"
         @select:suggest="onSelect"
         @multiselect:suggest="onMultiSelect"
@@ -23,16 +25,17 @@
 import SuggestsCollection from '@/collections/SuggestsCollection'
 import SuggestsBlock from '@/views/components/suggests/SuggestsBlock.vue'
 import SuggestSearch from '@/views/components/suggests/SuggestSearch.vue'
+import Loader from '@/views/components/loader/Loader.vue'
 
 export default {
   name: 'Suggest',
-  components: { SuggestsBlock, SuggestSearch },
+  components: { SuggestsBlock, SuggestSearch, Loader },
   data() {
     return {
+      status: null,
       search: '',
       collection: new SuggestsCollection(),
       suggest: null,
-      isShowSuggests: null,
       url: 'https://habr.com/kek/v2/publication/suggest-mention',
       label: '<span class="color--red">*</span> Пользователь или компания',
       placeholder: 'Введите имя пользователя или компании',
@@ -51,10 +54,8 @@ export default {
   methods: {
     onSetData(data) {
       if (data === null) {
-        this.isShowSuggests = false
         return
       }
-      this.isShowSuggests = true
       if (data?.length) {
         this.collection.set(data)
         return
@@ -62,7 +63,6 @@ export default {
       this.collection = new SuggestsCollection()
     },
     onSelect(suggest) {
-      this.isShowSuggests = false
       this.suggestSelected = [suggest]
     },
     onMultiSelect(suggest) {
@@ -73,7 +73,6 @@ export default {
     },
     onDelete(i) {
       this.suggestSelected.splice(i, 1)
-      this.isShowSuggests = true
     },
   }
 }

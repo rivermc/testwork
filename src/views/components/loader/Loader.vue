@@ -1,6 +1,6 @@
 <template>
   <div v-if="isLoading" class="loader">
-    <img src="@/assets/loader.gif" class="loader__image" alt="loader">
+    <img :src="image" class="loader__image" alt="loader">
   </div>
 </template>
 
@@ -13,6 +13,11 @@ export default {
       default: false,
     }
   },
+  data() {
+    return {
+      image: require('@/assets/loader.gif')
+    }
+  }
 }
 </script>
 

@@ -21,18 +21,16 @@
         />
       </template>
     </FormInput>
-    <Loader :is-loading="isLoading" />
   </form>
 </template>
 
 <script>
 import { FormInput, FormInputTag } from '@/views/components/form/'
-import Loader from '@/views/components/loader/Loader.vue'
 
 export default {
   name: 'SuggestSearch',
-  emits: ['update:data', 'delete:tag'],
-  components: { FormInput, FormInputTag, Loader },
+  emits: ['update:data', 'delete:tag', 'update:status'],
+  components: { FormInput, FormInputTag },
   props: {
     url: {
       type: String,
@@ -53,7 +51,11 @@ export default {
     tags: {
       type: Array,
       default: null
-    }
+    },
+    status: {
+      type: String,
+      default: null
+    },
   },
   data() {
     return {
@@ -87,22 +89,27 @@ export default {
       this.xhr.abort()
       if (!this.validation) {
         this.$emit('update:data', null)
+        this.$emit('update:status', 'invalid')
         return
       }
       this.isLoading = true
+      this.$emit('update:status', 'loading')
       this.xhr.open('GET', this.url + this.query)
       this.xhr.onload = () => {
         if (this.xhr.status === 200) {
           const res = JSON.parse(this.xhr.response)
           this.$emit('update:data', res.data)
+          this.$emit('update:status', 'ready')
         }
         else {
           this.error = `Ошибка ${this.xhr.status}: ${this.xhr.statusText}`
+          this.$emit('update:status', `error - ${this.xhr.status}`)
         }
         this.isLoading = false
       };
       this.xhr.onerror = () => {
         this.error = `Ошибка ${this.xhr.status}: ${this.xhr.statusText}`
+        this.$emit('update:status', `error - ${this.xhr.status}`)
       };
 
       this.xhr.send()

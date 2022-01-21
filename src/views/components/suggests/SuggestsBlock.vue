@@ -37,6 +37,9 @@ export default {
 
 .suggests-block {
   border: 1px solid $color-gray;
+  background: $color-white;
+  z-index: 100;
+  position: absolute;
   display: inline-block;
   max-height: 250px;
   min-width: 50%;
