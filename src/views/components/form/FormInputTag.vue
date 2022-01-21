@@ -2,14 +2,14 @@
   <div class="form__tags">
     <div
       v-for="(tag, i) in tags"
-      :key="i + tag.alias"
-      :aria-label="`@${tag.alias}`"
+      :key="i + tag"
+      :aria-label="tag"
       class="form__tag"
       tabindex="0"
       role="button"
       @keydown.enter="onDelete(i)"
     >
-      {{ `@${tag.alias}` }}
+      {{ tag }}
       <span class="form__tag-close" @click="onDelete(i)">x</span>
     </div>
   </div>

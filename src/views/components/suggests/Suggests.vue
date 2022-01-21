@@ -37,7 +37,7 @@ export default {
       label: '<span class="color--red">*</span> Пользователь или компания',
       placeholder: 'Введите имя пользователя или компании',
       param: 'q',
-      tagsList: [],
+      suggestSelected: [],
     }
   },
   computed: {
@@ -45,7 +45,7 @@ export default {
       return this.collection.asArray()
     },
     tags() {
-      return this.tagsList.length ? this.tagsList : []
+      return this.suggestSelected.length ? this.suggestSelected.map((tag) => `@${tag.alias}`) : []
     },
   },
   methods: {
@@ -63,16 +63,16 @@ export default {
     },
     onSelect(suggest) {
       this.isShowSuggests = false
-      this.tagsList = [suggest]
+      this.suggestSelected = [suggest]
     },
     onMultiSelect(suggest) {
-      const check = this.tagsList.find((item) => item.alias === suggest.alias)
+      const check = this.suggestSelected.find((item) => item.alias === suggest.alias)
       if (!check) {
-        this.tagsList.push(suggest)
+        this.suggestSelected.push(suggest)
       }
     },
     onDelete(i) {
-      this.tagsList.splice(i, 1)
+      this.suggestSelected.splice(i, 1)
       this.isShowSuggests = true
     },
   }
