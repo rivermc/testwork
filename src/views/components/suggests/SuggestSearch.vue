@@ -1,40 +1,55 @@
 <template>
   <form
+    class="suggests__search"
     role="search"
     aria-label="Suggest Search"
-    class="suggests__search"
-    @submit.prevent="onSearch"
+    @submit.prevent=""
   >
-    <FormInput
-      :model.sync="search"
-      :is-valid="validation"
-      :error="error"
-      :label="label"
-      :placeholder="placeholder"
-      @update:model="onSearch"
-    >
-      <template #tags>
-        <FormInputTag
-          v-if="tags.length"
-          :tags="tags"
-          @delete:tag="onDelete"
+    <div class="form__group">
+      <label
+        v-if="label"
+        v-html="label"
+        class="form__label"
+      />
+      <div class="form__input-group">
+        <input
+          v-model="value"
+          :placeholder="placeholder"
+          :class="{'form__input--error': !isValid, 'form__input--with-tags': tags.length}"
+          class="form__input"
         />
-      </template>
-    </FormInput>
+        <div
+          v-if="tags.length"
+          class="form__tags"
+        >
+          <div
+            v-for="tag in tags"
+            :key="tag.id"
+            :aria-label="tag.alias"
+            class="form__tag"
+            tabindex="0"
+            role="button"
+            @keydown.enter="onDelete(tag)"
+          >
+            {{ tag.alias }}
+            <span class="form__tag-close" @click="onDelete(tag)">x</span>
+          </div>
+        </div>
+      </div>
+      <p v-if="!isValid" class="form__input-error">Некорректное значение</p>
+      <p v-if="error" class="form__input-error">{{ error }}</p>
+    </div>
   </form>
 </template>
 
 <script>
-import { FormInput, FormInputTag } from '@/views/components/form/'
-
 export default {
   name: 'SuggestSearch',
-  emits: ['update:data', 'delete:tag', 'update:status'],
-  components: { FormInput, FormInputTag },
+  emits: ['update:search', 'delete:tag'],
   props: {
-    url: {
+    search: {
       type: String,
-      default: 'https://habr.com/kek/v2/publication/suggest-mention'
+      default: null
     },
     label: {
       type: String,
@@ -52,77 +67,102 @@ export default {
       type: Array,
       default: null
     },
-    status: {
-      type: String,
-      default: null
+    isValid: {
+      type: Boolean,
+      default: true,
     },
-  },
-  data() {
-    return {
-      search: '',
-      error: null,
-      throttlePause: null,
-      xhr: new XMLHttpRequest(),
-      isLoading: false,
+    error: {
+      type: String,
+      default: '',
     }
   },
   computed: {
-    validation() {
-      const regexp = /^[а-яА-Яa-zA-Z0-9]*$/i;
-      return this.search.length > 2 && regexp.test(this.search)
-    },
-    query() {
-      return `?${this.param}=${this.search}`
+    value: {
+      get() {
+        return this.search
+      },
+      set(value) {
+        this.$emit('update:search', value)
+      }
     }
   },
   methods: {
-    onDelete(i) {
-      this.$emit('delete:tag', i)
-    },
-
-    onSearch() {
-      this.throttle(this.getData, 500)
-    },
-
-    getData() {
-      this.error = null
-      this.xhr.abort()
-      if (!this.validation) {
-        this.$emit('update:data', null)
-        this.$emit('update:status', 'invalid')
-        return
-      }
-      this.isLoading = true
-      this.$emit('update:status', 'loading')
-      this.xhr.open('GET', this.url + this.query)
-      this.xhr.onload = () => {
-        if (this.xhr.status === 200) {
-          const res = JSON.parse(this.xhr.response)
-          this.$emit('update:data', res.data)
-          this.$emit('update:status', 'ready')
-        }
-        else {
-          this.error = `Ошибка ${this.xhr.status}: ${this.xhr.statusText}`
-          this.$emit('update:status', `error - ${this.xhr.status}`)
-        }
-        this.isLoading = false
-      };
-      this.xhr.onerror = () => {
-        this.error = `Ошибка ${this.xhr.status}: ${this.xhr.statusText}`
-        this.$emit('update:status', `error - ${this.xhr.status}`)
-      };
-
-      this.xhr.send()
-    },
-
-    throttle(cb, ms) {
-      if (this.throttlePause) return
-      this.throttlePause = true
-      setTimeout(() => {
-        cb.call(this)
-        this.throttlePause = false
-      }, ms)
+    onDelete(tag) {
+      tag.selected = false
+      this.$emit('delete:tag', tag)
     },
   }
 }
 </script>
+
+<style lang="scss" scoped>
+@import '~@/assets/styles/variable.scss';
+
+.form {
+  &__tags {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  &__tag {
+    color: $color-white;
+    background: $color-blue;
+    font-weight: bold;
+    padding: 5px;
+    font-size: 12px;
+    margin: 0 2px 2px 0;
+    border-radius: 2px;
+
+    &-close {
+      font-weight: normal;
+      cursor: pointer;
+      padding: 5px 0;
+    }
+  }
+
+  &__group {
+    border: 1px solid $color-gray;
+    padding: 5px;
+  }
+
+  &__label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+
+  &__input {
+    border: none;
+    outline: none;
+    padding: 5px;
+    flex: 1;
+
+    &--error {
+      border-color: $color-red;
+    }
+
+    &--with-tags {
+      border-bottom: 1px solid $color-gray;
+      margin-bottom: 5px;
+    }
+
+    &-group {
+      border: 1px solid $color-gray;
+      width: 100%;
+      padding: 5px;
+      border-radius: 5px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    &-error {
+      color: $color-red;
+      font-size: 12px;
+      margin: 5px 0 0;
+    }
+  }
+}
+</style>

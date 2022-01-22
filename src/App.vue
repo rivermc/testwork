@@ -1,20 +1,6 @@
 <template>
   <div id="app" role="main">
     <Suggests />
-    <div class="instruction">
-      <h3>Keyboard Control</h3>
-      <ul>
-        <li>Tab - Next Element</li>
-        <li>Shift Tab - Previous Element</li>
-        <li>Enter - Select</li>
-        <li>Ctrl Enter - Multiply Select</li>
-      </ul>
-      <h3>Mouse Control</h3>
-      <ul>
-        <li>Click - Select</li>
-        <li>Ctrl Click - Multiply Select</li>
-      </ul>
-    </div>
   </div>
 </template>
 
@@ -28,7 +14,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import './assets/styles/variable';
+@import '~@/assets/styles/variable';
 
 #app {
   max-width: 500px;
@@ -36,10 +22,6 @@ export default {
 
   * {
     box-sizing: border-box;
-
-    &:focus {
-      outline: 2px solid $color-blue;
-    }
   }
 
   .color--red {
@@ -51,6 +33,20 @@ export default {
   }
   .fade-enter, .fade-leave-to {
     opacity: 0;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: $color-blue;
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: $color-gray-dark;
+    border-radius: 5px;
+    min-height: 50px;
   }
 }
 </style>
