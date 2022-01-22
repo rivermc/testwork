@@ -16,42 +16,9 @@ export default {
 <style lang="scss">
 @import '~@/assets/styles/variable';
 
-html {
-  font-size: 10px;
-}
-
 #app {
   color: $color-black;
   max-width: 500px;
   margin: 20px auto;
-
-  * {
-    box-sizing: border-box;
-  }
-
-  .color--red {
-    color: $color-red;
-  }
-
-  .fade-enter-active {
-    transition: opacity .5s;
-  }
-  .fade-enter, .fade-leave-to {
-    opacity: 0;
-  }
-
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 10px;
-  }
-  ::-webkit-scrollbar-track {
-    background: $color-blue;
-    border-radius: 5px;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: $color-gray-dark;
-    border-radius: 5px;
-    min-height: 50px;
-  }
 }
 </style>

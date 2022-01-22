@@ -152,8 +152,9 @@ export default {
     border-radius: 2px;
 
     &:focus {
-      outline: none;
       background: $color-purple-light;
+      color: $color-gray-dark;
+      outline: none;
     }
 
     &-close {
