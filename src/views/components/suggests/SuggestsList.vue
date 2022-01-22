@@ -77,16 +77,17 @@ export default {
         }
         this.$refs.Suggest[this.active].focus()
       }
-    }
+    },
+
+    controlHandler(e) {
+      if (e.key === 'ArrowUp') this.setActiveSuggest(-1)
+      else if (e.key === 'ArrowDown') this.setActiveSuggest(1)
+    },
   },
   mounted() {
     this.setSelected()
   },
   created() {
-    this.controlHandler = (e) => {
-      if (e.key === 'ArrowUp') this.setActiveSuggest(-1)
-      if (e.key === 'ArrowDown') this.setActiveSuggest(1)
-    }
     window.addEventListener('keyup', this.controlHandler)
   },
   beforeDestroy() {

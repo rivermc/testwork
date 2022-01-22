@@ -20,7 +20,7 @@
           :placeholder="placeholder"
           :class="{'form__input--with-tags': tags.length}"
           class="form__input"
-          ref="Input"
+          ref="Search"
         />
         <div
           v-if="tags.length"
@@ -114,16 +114,17 @@ export default {
     },
 
     setFocusInput() {
-      this.$refs.Input.focus()
-    }
-  },
-  created() {
-    const excludeKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Enter']
-    this.controlHandler = (e) => {
+      this.$refs.Search.focus()
+    },
+
+    controlHandler(e) {
+      const excludeKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Enter']
       if (e.key === 'ArrowLeft') this.setActiveTag(-1)
       else if (e.key === 'ArrowRight') this.setActiveTag(1)
       else if (!excludeKeys.includes(e.key)) this.setFocusInput()
-    }
+    },
+  },
+  created() {
     window.addEventListener('keyup', this.controlHandler)
   },
   beforeDestroy() {
