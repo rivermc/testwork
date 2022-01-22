@@ -1,12 +1,11 @@
 <template>
-  <div class="suggests-block" role="list">
+  <ul class="suggests-list">
     <template v-if="suggests.length">
-      <div
-        v-for="(suggest, i) in suggests"
+      <li
+        v-for="suggest in suggests"
+        :key="suggest.alias + suggest.type"
         :aria-label="suggest.name"
-        :key="suggest.alias + i"
         :class="{'suggest': true, 'suggest--selected': suggest.selected}"
-        role="listitem"
         tabindex="0"
         @keydown.enter="onSelect(suggest)"
         @click="onSelect(suggest)"
@@ -21,18 +20,18 @@
           <p v-if="suggest.type === 'user'" class="suggest__text-alias">{{ suggest.alias }}</p>
           <p v-else class="suggest__text-caption">{{ suggest.caption }}</p>
         </div>
-      </div>
+      </li>
     </template>
     <template v-else>
-      <p class="suggests-block__notify">По Вашему запросу ничего не найдено</p>
+      <p class="suggests-list__notify">По Вашему запросу ничего не найдено</p>
     </template>
-  </div>
+  </ul>
 </template>
 
 <script>
 
 export default {
-  name: 'SuggestsBlock',
+  name: 'SuggestsList',
   props: {
     suggests: {
       type: Array,
@@ -44,11 +43,11 @@ export default {
     },
   },
   mounted() {
-    this.setStatus()
+    this.setSelected()
   },
   watch: {
     selected() {
-      this.setStatus()
+      this.setSelected()
     }
   },
   methods: {
@@ -57,10 +56,10 @@ export default {
       this.$emit('select:suggest', suggest)
     },
 
-    setStatus() {
+    setSelected() {
       this.suggests.forEach((suggest) => {
         const check = this.selected.find((sgst) => sgst.alias === suggest.alias && sgst.type === suggest.type)
-        suggest.selected = !!check;
+        suggest.selected = !!check
       })
     }
   }
@@ -69,8 +68,9 @@ export default {
 
 <style lang="scss" scoped>
 @import '~@/assets/styles/variable.scss';
+@import '~@/assets/styles/mixins.scss';
 
-.suggests-block {
+.suggests-list {
   border: 1px solid $color-gray;
   background: $color-white;
   display: inline-block;
@@ -78,16 +78,21 @@ export default {
   min-width: 50%;
   overflow: auto;
   margin: 5px 0;
+  padding: 0;
+
+  @media screen and (max-width: 576px) {
+    width: 100%;
+  }
 
   &__notify {
     padding: 0 10px;
-    font-size: 14px;
+    font-size: 1.4rem;
   }
 }
 
 .suggest {
-  display: flex;
-  align-items: center;
+  @include flex($align:center);
+  border-bottom: 1px solid $color-white;
   padding: 10px;
   cursor: pointer;
 
@@ -96,7 +101,7 @@ export default {
   }
 
   &--selected {
-    background: $color-gray;
+    background: $color-blue-light;
   }
 
   &__image {
@@ -106,7 +111,7 @@ export default {
   }
 
   &__text {
-    font-size: 14px;
+    font-size: 1.4rem;
 
     &-name {
       margin: 0;

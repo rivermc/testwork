@@ -11,11 +11,14 @@
         v-html="label"
         class="form__label"
       />
-      <div class="form__input-group">
+      <div
+        class="form__input-group"
+        :class="{'form__input-group--error': valid}"
+      >
         <input
           v-model="value"
           :placeholder="placeholder"
-          :class="{'form__input--error': !valid, 'form__input--with-tags': tags.length}"
+          :class="{'form__input--with-tags': tags.length}"
           class="form__input"
         />
         <div
@@ -95,12 +98,11 @@ export default {
 
 <style lang="scss" scoped>
 @import '~@/assets/styles/variable.scss';
+@import '~@/assets/styles/mixins.scss';
 
 .form {
   &__tags {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
+    @include flex($align:center, $wrap:wrap);
     width: 100%;
   }
 
@@ -109,7 +111,7 @@ export default {
     background: $color-blue;
     font-weight: bold;
     padding: 5px;
-    font-size: 12px;
+    font-size: 1.2rem;
     margin: 0 2px 2px 0;
     border-radius: 2px;
 
@@ -122,12 +124,13 @@ export default {
 
   &__group {
     border: 1px solid $color-gray;
-    padding: 5px;
+    padding: 10px 5px 2.4rem;
+    position: relative;
   }
 
   &__label {
     display: block;
-    font-size: 14px;
+    font-size: 1.4rem;
     margin-bottom: 5px;
   }
 
@@ -135,11 +138,7 @@ export default {
     border: none;
     outline: none;
     padding: 5px;
-    flex: 1;
-
-    &--error {
-      border-color: $color-red;
-    }
+    width: 100%;
 
     &--with-tags {
       border-bottom: 1px solid $color-gray;
@@ -147,18 +146,22 @@ export default {
     }
 
     &-group {
+      @include flex($align:center, $wrap:wrap);
       border: 1px solid $color-gray;
+      transition: $transition;
       width: 100%;
       padding: 5px;
       border-radius: 5px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
+
+      &--error {
+        border-color: $color-red;
+      }
     }
 
     &-error {
       color: $color-red;
-      font-size: 12px;
+      position: absolute;
+      font-size: 1.2rem;
       margin: 5px 0 0;
     }
   }

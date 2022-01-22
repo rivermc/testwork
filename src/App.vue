@@ -16,12 +16,21 @@ export default {
 <style lang="scss">
 @import '~@/assets/styles/variable';
 
+html {
+  font-size: 10px;
+}
+
 #app {
+  color: $color-black;
   max-width: 500px;
   margin: 20px auto;
 
   * {
     box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+    }
   }
 
   .color--red {

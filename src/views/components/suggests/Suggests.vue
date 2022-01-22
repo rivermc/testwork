@@ -1,6 +1,5 @@
 <template>
   <div class="suggests">
-
     <SuggestSearch
       :label="label"
       :placeholder="placeholder"
@@ -12,46 +11,44 @@
       @delete:tag="onSelect"
     />
 
-    <Loader v-if="status === 'loading'" />
     <transition name="fade">
-      <SuggestsBlock
+      <SuggestsList
         v-if="status === 'ready'"
         :suggests="suggests"
         :selected="selected"
         @select:suggest="onSelect"
       />
     </transition>
+
+    <Loader v-show="status === 'loading'" />
   </div>
 </template>
 
 <script>
-import SuggestsBlock from '@/views/components/suggests/SuggestsBlock.vue'
+import SuggestsList from '@/views/components/suggests/SuggestsList.vue'
 import SuggestSearch from '@/views/components/suggests/SuggestSearch.vue'
 import Loader from '@/views/components/loader/Loader.vue'
 import Suggest from '@/models/Suggest'
 
 export default {
   name: 'Suggest',
-  components: { SuggestsBlock, SuggestSearch, Loader },
+  components: { SuggestsList, SuggestSearch, Loader },
   data() {
     return {
       status: null,
-      search: '',
       error: '',
-      collection: [],
+      search: '',
+      suggests: [],
       selected: [],
       url: 'https://habr.com/kek/v2/publication/suggest-mention',
       label: '<span class="color--red">*</span> Пользователь или компания',
       placeholder: 'Введите имя пользователя или компании',
       param: 'q',
-      throttlePause: null,
+      timeout: null,
       xhr: new XMLHttpRequest(),
     }
   },
   computed: {
-    suggests() {
-      return this.collection
-    },
     query() {
       return `?${this.param}=${this.search}`
     },
@@ -62,7 +59,7 @@ export default {
       }
       const regexp = /^[а-яА-Яa-zA-Z0-9]*$/i
       if (!regexp.test(this.search)) {
-        error = 'Не верное значение. Можно использовать только буквы и цифры'
+        error = 'Можно использовать только буквы и цифры'
       }
       return error
     }
@@ -116,26 +113,20 @@ export default {
 
     setData(data) {
       if (data?.length) {
-        this.collection = data.map((item) => new Suggest(item))
+        this.suggests = data.map((item) => new Suggest(item))
         return
       }
-      this.collection = []
+      this.suggests = []
     },
 
     throttle(cb, ms) {
-      if (this.throttlePause) return
-      this.throttlePause = true
+      if (this.timeout) return
+      this.timeout = true
       setTimeout(() => {
         cb.call(this)
-        this.throttlePause = false
+        this.timeout = false
       }, ms)
     },
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.suggests {
-  position: relative;
-}
-</style>

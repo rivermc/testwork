@@ -1,0 +1,16 @@
+@use "sass:meta";
+
+@mixin flex($args...) {
+  display: flex;
+  @each $name, $value in meta.keywords($args) {
+    @if $name == justify {
+      justify-content: $value;
+    }
+    @if $name == align {
+      align-items: $value;
+    }
+    @if $name == wrap {
+      flex-wrap: $value;
+    }
+  }
+}
