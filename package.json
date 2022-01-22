@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
-    "uuidv4": "^6.2.12",
     "vue": "^2.6.11"
   },
   "devDependencies": {
