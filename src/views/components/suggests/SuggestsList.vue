@@ -6,6 +6,7 @@
         :key="suggest.alias + suggest.type"
         :aria-label="suggest.name"
         :class="{'suggest': true, 'suggest--selected': suggest.selected}"
+        ref="Suggest"
         tabindex="0"
         @keydown.enter="onSelect(suggest)"
         @click="onSelect(suggest)"
@@ -42,8 +43,10 @@ export default {
       required: true,
     },
   },
-  mounted() {
-    this.setSelected()
+  data() {
+    return {
+      active: -1,
+    }
   },
   watch: {
     selected() {
@@ -61,8 +64,34 @@ export default {
         const check = this.selected.find((sgst) => sgst.alias === suggest.alias && sgst.type === suggest.type)
         suggest.selected = !!check
       })
+    },
+
+    setActiveSuggest(nav) {
+      if (this.suggests.length) {
+        this.active += nav
+        if (this.active > this.suggests.length - 1) {
+          this.active = this.suggests.length - 1
+        }
+        if (this.active < 0) {
+          this.active = 0
+        }
+        this.$refs.Suggest[this.active].focus()
+      }
     }
-  }
+  },
+  mounted() {
+    this.setSelected()
+  },
+  created() {
+    this.controlHandler = (e) => {
+      if (e.key === 'ArrowUp') this.setActiveSuggest(-1)
+      if (e.key === 'ArrowDown') this.setActiveSuggest(1)
+    }
+    window.addEventListener('keyup', this.controlHandler)
+  },
+  beforeDestroy() {
+    window.removeEventListener('keyup', this.controlHandler)
+  },
 }
 </script>
 
@@ -95,6 +124,11 @@ export default {
   border-bottom: 1px solid $color-white;
   padding: 10px;
   cursor: pointer;
+
+  &:focus {
+    outline: none;
+    background: $color-purple-light;
+  }
 
   &:hover {
     background: $color-gray;

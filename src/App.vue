@@ -27,10 +27,6 @@ html {
 
   * {
     box-sizing: border-box;
-
-    &:focus {
-      outline: none;
-    }
   }
 
   .color--red {

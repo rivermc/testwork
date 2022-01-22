@@ -20,6 +20,7 @@
           :placeholder="placeholder"
           :class="{'form__input--with-tags': tags.length}"
           class="form__input"
+          ref="Input"
         />
         <div
           v-if="tags.length"
@@ -32,6 +33,7 @@
             class="form__tag"
             tabindex="0"
             role="button"
+            ref="Tag"
             @keydown.enter="onDelete(tag)"
           >
             {{ tag.alias }}
@@ -77,6 +79,11 @@ export default {
       default: '',
     }
   },
+  data() {
+    return {
+      active: -1,
+    }
+  },
   computed: {
     value: {
       get() {
@@ -92,7 +99,36 @@ export default {
       tag.selected = false
       this.$emit('delete:tag', tag)
     },
-  }
+
+    setActiveTag(nav) {
+      if (this.tags.length) {
+        this.active += nav
+        if (this.active > this.tags.length - 1) {
+          this.active = this.tags.length - 1
+        }
+        if (this.active < 0) {
+          this.active = 0
+        }
+        this.$refs.Tag[this.active].focus()
+      }
+    },
+
+    setFocusInput() {
+      this.$refs.Input.focus()
+    }
+  },
+  created() {
+    const excludeKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Enter']
+    this.controlHandler = (e) => {
+      if (e.key === 'ArrowLeft') this.setActiveTag(-1)
+      else if (e.key === 'ArrowRight') this.setActiveTag(1)
+      else if (!excludeKeys.includes(e.key)) this.setFocusInput()
+    }
+    window.addEventListener('keyup', this.controlHandler)
+  },
+  beforeDestroy() {
+    window.removeEventListener('keyup', this.controlHandler)
+  },
 }
 </script>
 
@@ -114,6 +150,11 @@ export default {
     font-size: 1.2rem;
     margin: 0 2px 2px 0;
     border-radius: 2px;
+
+    &:focus {
+      outline: none;
+      background: $color-purple-light;
+    }
 
     &-close {
       font-weight: normal;

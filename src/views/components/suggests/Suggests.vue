@@ -127,6 +127,6 @@ export default {
         this.timeout = false
       }, ms)
     },
-  }
+  },
 }
 </script>
