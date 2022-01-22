@@ -15,7 +15,7 @@
         <input
           v-model="value"
           :placeholder="placeholder"
-          :class="{'form__input--error': !isValid, 'form__input--with-tags': tags.length}"
+          :class="{'form__input--error': !valid, 'form__input--with-tags': tags.length}"
           class="form__input"
         />
         <div
@@ -36,8 +36,10 @@
           </div>
         </div>
       </div>
-      <p v-if="!isValid" class="form__input-error">Некорректное значение</p>
-      <p v-if="error" class="form__input-error">{{ error }}</p>
+      <p v-if="valid || error" class="form__input-error">
+        <template v-if="valid">{{ valid }}</template>
+        <template v-else-if="error">{{ error }}</template>
+      </p>
     </div>
   </form>
 </template>
@@ -59,17 +61,13 @@ export default {
       type: String,
       default: ''
     },
-    param: {
-      type: String,
-      default: 'q'
-    },
     tags: {
       type: Array,
       default: null
     },
-    isValid: {
-      type: Boolean,
-      default: true,
+    valid: {
+      type: String,
+      default: '',
     },
     error: {
       type: String,

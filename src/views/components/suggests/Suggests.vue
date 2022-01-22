@@ -6,7 +6,7 @@
       :placeholder="placeholder"
       :tags="selected"
       :search.sync="search"
-      :is-valid="validation()"
+      :valid="validation"
       :error="error"
       @update:search="onSearch"
       @delete:tag="onSelect"
@@ -28,7 +28,7 @@
 import SuggestsBlock from '@/views/components/suggests/SuggestsBlock.vue'
 import SuggestSearch from '@/views/components/suggests/SuggestSearch.vue'
 import Loader from '@/views/components/loader/Loader.vue'
-import Suggest from "@/models/Suggest";
+import Suggest from '@/models/Suggest'
 
 export default {
   name: 'Suggest',
@@ -37,15 +37,15 @@ export default {
     return {
       status: null,
       search: '',
+      error: '',
       collection: [],
+      selected: [],
       url: 'https://habr.com/kek/v2/publication/suggest-mention',
       label: '<span class="color--red">*</span> Пользователь или компания',
       placeholder: 'Введите имя пользователя или компании',
       param: 'q',
       throttlePause: null,
-      error: '',
       xhr: new XMLHttpRequest(),
-      selected: [],
     }
   },
   computed: {
@@ -55,6 +55,17 @@ export default {
     query() {
       return `?${this.param}=${this.search}`
     },
+    validation() {
+      let error = ''
+      if (this.search.length < 3 && this.search.length > 0) {
+        error = 'Допустимая минимальная длина 3 символа'
+      }
+      const regexp = /^[а-яА-Яa-zA-Z0-9]*$/i
+      if (!regexp.test(this.search)) {
+        error = 'Не верное значение. Можно использовать только буквы и цифры'
+      }
+      return error
+    }
   },
   methods: {
     onSearch() {
@@ -90,20 +101,17 @@ export default {
       this.status = `error`
     },
 
-    validation() {
-      const regexp = /^[а-яА-Яa-zA-Z0-9]*$/i
-      return this.search.length > 0 && regexp.test(this.search)
-    },
-
     getData() {
       this.error = null
-      if (!this.validation()) return
-      this.status = 'loading'
-      this.xhr.abort()
-      this.xhr.open('GET', this.url + this.query)
-      this.xhr.onload = this.onXHRLoad
-      this.xhr.onerror = this.onXHRError
-      this.xhr.send()
+      if (this.validation) return
+      if (this.search) {
+        this.status = 'loading'
+        this.xhr.abort()
+        this.xhr.open('GET', this.url + this.query)
+        this.xhr.onload = this.onXHRLoad
+        this.xhr.onerror = this.onXHRError
+        this.xhr.send()
+      }
     },
 
     setData(data) {
