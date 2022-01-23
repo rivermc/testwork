@@ -1,20 +1,11 @@
 <template>
   <div id="app" role="main">
-    <Suggests />
-    <div class="instruction">
-      <h3>Keyboard Control</h3>
-      <ul>
-        <li>Tab - Next Element</li>
-        <li>Shift Tab - Previous Element</li>
-        <li>Enter - Select</li>
-        <li>Ctrl Enter - Multiply Select</li>
-      </ul>
-      <h3>Mouse Control</h3>
-      <ul>
-        <li>Click - Select</li>
-        <li>Ctrl Click - Multiply Select</li>
-      </ul>
-    </div>
+    <Suggests
+      label="<span class='color--red'>*</span> Пользователь или компания"
+      placeholder="Введите имя пользователя или компании"
+      url="https://habr.com/kek/v2/publication/suggest-mention"
+      param="q"
+    />
   </div>
 </template>
 
@@ -28,29 +19,11 @@ export default {
 </script>
 
 <style lang="scss">
-@import './assets/styles/variable';
+@import '~@/assets/styles/variable';
 
 #app {
+  color: $color-black;
   max-width: 500px;
   margin: 20px auto;
-
-  * {
-    box-sizing: border-box;
-
-    &:focus {
-      outline: 2px solid $color-blue;
-    }
-  }
-
-  .color--red {
-    color: $color-red;
-  }
-
-  .fade-enter-active {
-    transition: opacity .5s;
-  }
-  .fade-enter, .fade-leave-to {
-    opacity: 0;
-  }
 }
 </style>

@@ -1,85 +1,146 @@
 <template>
   <div class="suggests">
     <SuggestSearch
-      :url="url"
       :label="label"
       :placeholder="placeholder"
-      :tags="tags"
-      :status.sync="status"
-      @update:data="onSetData"
-      @delete:tag="onDelete"
+      :tags="selected"
+      :search.sync="search"
+      :valid="validation"
+      :error="error"
+      @update:search="onSearch"
+      @delete:tag="onSelect"
     />
-    <Loader :is-loading="status === 'loading'" />
+
     <transition name="fade">
-      <SuggestsBlock
+      <SuggestsList
         v-if="status === 'ready'"
         :suggests="suggests"
+        :selected="selected"
         @select:suggest="onSelect"
-        @multiselect:suggest="onMultiSelect"
       />
     </transition>
+
+    <Loader v-show="status === 'loading'" />
   </div>
 </template>
 
 <script>
-import SuggestsCollection from '@/collections/SuggestsCollection'
-import SuggestsBlock from '@/views/components/suggests/SuggestsBlock.vue'
+import SuggestsList from '@/views/components/suggests/SuggestsList.vue'
 import SuggestSearch from '@/views/components/suggests/SuggestSearch.vue'
 import Loader from '@/views/components/loader/Loader.vue'
+import Suggest from '@/models/Suggest'
 
 export default {
   name: 'Suggest',
-  components: { SuggestsBlock, SuggestSearch, Loader },
+  components: { SuggestsList, SuggestSearch, Loader },
+  props: {
+    label: {
+      type: String,
+      default: '<span class="color--red">*</span> Пользователь или компания',
+    },
+    placeholder: {
+      type: String,
+      default: 'Введите имя пользователя или компании',
+    },
+    url: {
+      type: String,
+      default: 'https://habr.com/kek/v2/publication/suggest-mention',
+    },
+    param: {
+      type: String,
+      default: 'q',
+    },
+  },
   data() {
     return {
-      status: null,
+      status: '',
+      error: '',
       search: '',
-      collection: new SuggestsCollection(),
-      suggest: null,
-      url: 'https://habr.com/kek/v2/publication/suggest-mention',
-      label: '<span class="color--red">*</span> Пользователь или компания',
-      placeholder: 'Введите имя пользователя или компании',
-      param: 'q',
-      suggestSelected: [],
+      suggests: [],
+      selected: [],
+      timeout: null,
+      xhr: new XMLHttpRequest(),
     }
   },
   computed: {
-    suggests() {
-      return this.collection.asArray()
+    query() {
+      return `?${this.param}=${this.search}`
     },
-    tags() {
-      return this.suggestSelected.length ? this.suggestSelected.map((tag) => `@${tag.alias}`) : []
-    },
+    validation() {
+      let error = ''
+      if (this.search.length < 3 && this.search.length > 0) {
+        error = 'Допустимая минимальная длина 3 символа'
+      }
+      const regexp = /^[а-яА-Яa-zA-Z0-9]*$/i
+      if (!regexp.test(this.search)) {
+        error = 'Можно использовать только буквы и цифры'
+      }
+      return error
+    }
   },
   methods: {
-    onSetData(data) {
-      if (data === null) {
-        return
-      }
-      if (data?.length) {
-        this.collection.set(data)
-        return
-      }
-      this.collection = new SuggestsCollection()
+    onSearch() {
+      this.throttle(this.getData, 500)
     },
+
     onSelect(suggest) {
-      this.suggestSelected = [suggest]
+      const check = this.selected.find((sgst) => sgst.alias === suggest.alias && sgst.type === suggest.type)
+      if (suggest.selected && !check) {
+        this.selected.push(suggest)
+      }
+      if (!suggest.selected && check) {
+        check.selected = false
+      }
+      this.selected = this.selected.filter((sgst) => sgst.selected)
     },
-    onMultiSelect(suggest) {
-      const check = this.suggestSelected.find((item) => item.alias === suggest.alias)
-      if (!check) {
-        this.suggestSelected.push(suggest)
+
+    onXHRLoad() {
+      const res = JSON.parse(this.xhr.response)
+      if (this.xhr.status === 200) {
+        this.setData(res.data)
+        this.status = 'ready'
+      }
+      else {
+        this.error = `Ошибка ${res.code}: ${res.message}`
+        this.status = 'error'
       }
     },
-    onDelete(i) {
-      this.suggestSelected.splice(i, 1)
+
+    onXHRError() {
+      const message = this.xhr.status === 0 ? 'Нет доступа к интернету' : ''
+      this.error = `Ошибка ${this.xhr.status}: ${message}`
+      this.status = 'error'
     },
-  }
+
+    getData() {
+      this.error = null
+      if (this.validation) return
+      if (this.search) {
+        this.status = 'loading'
+        this.xhr.abort()
+        this.xhr.open('GET', this.url + this.query)
+        this.xhr.onload = this.onXHRLoad
+        this.xhr.onerror = this.onXHRError
+        this.xhr.send()
+      }
+    },
+
+    setData(data) {
+      if (data?.length) {
+        this.suggests = data.map((item) => new Suggest(item))
+        return
+      }
+      this.suggests = []
+    },
+
+    throttle(cb, ms) {
+      if (this.timeout) return
+      this.timeout = true
+      setTimeout(() => {
+        cb.call(this)
+        this.timeout = false
+      }, ms)
+    },
+  },
 }
 </script>
-
-<style lang="scss" scoped>
-.suggests {
-  position: relative;
-}
-</style>

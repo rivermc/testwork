@@ -1,128 +1,212 @@
 <template>
   <form
+    class="suggests__search"
     role="search"
     aria-label="Suggest Search"
-    class="suggests__search"
-    @submit.prevent="onSearch"
+    @submit.prevent=""
   >
-    <FormInput
-      :model.sync="search"
-      :is-valid="validation"
-      :error="error"
-      :label="label"
-      :placeholder="placeholder"
-      @update:model="onSearch"
-    >
-      <template #tags>
-        <FormInputTag
-          v-if="tags.length"
-          :tags="tags"
-          @delete:tag="onDelete"
+    <div class="form__group">
+      <label
+        v-if="label"
+        v-html="label"
+        class="form__label"
+      />
+      <div
+        class="form__input-group"
+        :class="{'form__input-group--error': valid}"
+      >
+        <input
+          v-model="value"
+          :placeholder="placeholder"
+          :class="{'form__input--with-tags': tags.length}"
+          class="form__input"
+          ref="Search"
         />
-      </template>
-    </FormInput>
+        <div
+          v-if="tags.length"
+          class="form__tags"
+        >
+          <div
+            v-for="tag in tags"
+            :key="tag.type + tag.alias"
+            :aria-label="tag.alias"
+            class="form__tag"
+            tabindex="0"
+            role="button"
+            ref="Tag"
+            @keydown.enter="onDelete(tag)"
+          >
+            {{ tag.alias }}
+            <span class="form__tag-close" @click="onDelete(tag)">x</span>
+          </div>
+        </div>
+      </div>
+      <p v-if="valid || error" class="form__input-error">
+        <template v-if="valid">{{ valid }}</template>
+        <template v-else-if="error">{{ error }}</template>
+      </p>
+    </div>
   </form>
 </template>
 
 <script>
-import { FormInput, FormInputTag } from '@/views/components/form/'
-
 export default {
   name: 'SuggestSearch',
-  emits: ['update:data', 'delete:tag', 'update:status'],
-  components: { FormInput, FormInputTag },
+  emits: ['update:search', 'delete:tag'],
   props: {
-    url: {
+    search: {
       type: String,
-      default: 'https://habr.com/kek/v2/publication/suggest-mention'
+      default: '',
     },
     label: {
       type: String,
-      default: ''
+      default: '',
     },
     placeholder: {
       type: String,
-      default: ''
-    },
-    param: {
-      type: String,
-      default: 'q'
+      default: '',
     },
     tags: {
       type: Array,
-      default: null
+      default: () => [],
     },
-    status: {
+    valid: {
       type: String,
-      default: null
+      default: '',
     },
+    error: {
+      type: String,
+      default: '',
+    }
   },
   data() {
     return {
-      search: '',
-      error: null,
-      throttlePause: null,
-      xhr: new XMLHttpRequest(),
-      isLoading: false,
+      active: -1,
     }
   },
   computed: {
-    validation() {
-      const regexp = /^[а-яА-Яa-zA-Z0-9]*$/i;
-      return this.search.length > 2 && regexp.test(this.search)
-    },
-    query() {
-      return `?${this.param}=${this.search}`
+    value: {
+      get() {
+        return this.search
+      },
+      set(value) {
+        this.$emit('update:search', value)
+      }
     }
   },
   methods: {
-    onDelete(i) {
-      this.$emit('delete:tag', i)
+    onDelete(tag) {
+      tag.selected = false
+      this.$emit('delete:tag', tag)
     },
 
-    onSearch() {
-      this.throttle(this.getData, 500)
-    },
-
-    getData() {
-      this.error = null
-      this.xhr.abort()
-      if (!this.validation) {
-        this.$emit('update:data', null)
-        this.$emit('update:status', 'invalid')
-        return
+    setActiveTag(nav) {
+      if (this.tags.length) {
+        this.active += nav
+        if (this.active > this.tags.length - 1) {
+          this.active = this.tags.length - 1
+        }
+        if (this.active < 0) {
+          this.active = 0
+        }
+        this.$refs.Tag[this.active].focus()
       }
-      this.isLoading = true
-      this.$emit('update:status', 'loading')
-      this.xhr.open('GET', this.url + this.query)
-      this.xhr.onload = () => {
-        if (this.xhr.status === 200) {
-          const res = JSON.parse(this.xhr.response)
-          this.$emit('update:data', res.data)
-          this.$emit('update:status', 'ready')
-        }
-        else {
-          this.error = `Ошибка ${this.xhr.status}: ${this.xhr.statusText}`
-          this.$emit('update:status', `error - ${this.xhr.status}`)
-        }
-        this.isLoading = false
-      };
-      this.xhr.onerror = () => {
-        this.error = `Ошибка ${this.xhr.status}: ${this.xhr.statusText}`
-        this.$emit('update:status', `error - ${this.xhr.status}`)
-      };
-
-      this.xhr.send()
     },
 
-    throttle(cb, ms) {
-      if (this.throttlePause) return
-      this.throttlePause = true
-      setTimeout(() => {
-        cb.call(this)
-        this.throttlePause = false
-      }, ms)
+    setFocusSearch() {
+      this.$refs.Search.focus()
     },
-  }
+
+    controlHandler(e) {
+      const excludeKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Enter']
+      if (e.key === 'ArrowLeft') this.setActiveTag(-1)
+      else if (e.key === 'ArrowRight') this.setActiveTag(1)
+      else if (!excludeKeys.includes(e.key)) this.setFocusSearch()
+    },
+  },
+  created() {
+    window.addEventListener('keyup', this.controlHandler)
+  },
+  beforeDestroy() {
+    window.removeEventListener('keyup', this.controlHandler)
+  },
 }
 </script>
+
+<style lang="scss" scoped>
+@import '~@/assets/styles/variable.scss';
+@import '~@/assets/styles/mixins.scss';
+
+.form {
+  &__tags {
+    @include flex($align:center, $wrap:wrap);
+    width: 100%;
+  }
+
+  &__tag {
+    color: $color-white;
+    background: $color-blue;
+    font-weight: bold;
+    padding: 5px;
+    font-size: 1.2rem;
+    margin: 0 2px 2px 0;
+    border-radius: 2px;
+
+    &:focus {
+      background: $color-purple-light;
+      color: $color-gray-dark;
+      outline: none;
+    }
+
+    &-close {
+      font-weight: normal;
+      cursor: pointer;
+      padding: 5px 0;
+    }
+  }
+
+  &__group {
+    border: 1px solid $color-gray;
+    padding: 10px 5px 2.4rem;
+    position: relative;
+  }
+
+  &__label {
+    display: block;
+    font-size: 1.4rem;
+    margin-bottom: 5px;
+  }
+
+  &__input {
+    border: none;
+    outline: none;
+    padding: 5px;
+    width: 100%;
+
+    &--with-tags {
+      border-bottom: 1px solid $color-gray;
+      margin-bottom: 5px;
+    }
+
+    &-group {
+      @include flex($align:center, $wrap:wrap);
+      border: 1px solid $color-gray;
+      transition: $transition;
+      width: 100%;
+      padding: 5px;
+      border-radius: 5px;
+
+      &--error {
+        border-color: $color-red;
+      }
+    }
+
+    &-error {
+      color: $color-red;
+      position: absolute;
+      font-size: 1.2rem;
+      margin: 5px 0 0;
+    }
+  }
+}
+</style>
