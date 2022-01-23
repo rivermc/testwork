@@ -28,7 +28,7 @@
         >
           <div
             v-for="tag in tags"
-            :key="tag.id"
+            :key="tag.type + tag.alias"
             :aria-label="tag.alias"
             class="form__tag"
             tabindex="0"
@@ -113,7 +113,7 @@ export default {
       }
     },
 
-    setFocusInput() {
+    setFocusSearch() {
       this.$refs.Search.focus()
     },
 
@@ -121,7 +121,7 @@ export default {
       const excludeKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Enter']
       if (e.key === 'ArrowLeft') this.setActiveTag(-1)
       else if (e.key === 'ArrowRight') this.setActiveTag(1)
-      else if (!excludeKeys.includes(e.key)) this.setFocusInput()
+      else if (!excludeKeys.includes(e.key)) this.setFocusSearch()
     },
   },
   created() {

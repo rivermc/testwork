@@ -3,7 +3,7 @@
     <template v-if="suggests.length">
       <li
         v-for="suggest in suggests"
-        :key="suggest.alias + suggest.type"
+        :key="suggest.type + suggest.alias"
         :aria-label="suggest.name"
         :class="{'suggest': true, 'suggest--selected': suggest.selected}"
         ref="Suggest"

@@ -88,14 +88,14 @@ export default {
       }
       else {
         this.error = `Ошибка ${res.code}: ${res.message}`
-        this.status = `error`
+        this.status = 'error'
       }
     },
 
     onXHRError() {
       const message = this.xhr.status === 0 ? 'Нет доступа к интернету' : ''
       this.error = `Ошибка ${this.xhr.status}: ${message}`
-      this.status = `error`
+      this.status = 'error'
     },
 
     getData() {
