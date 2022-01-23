@@ -36,19 +36,19 @@ export default {
   props: {
     label: {
       type: String,
-      default: '',
+      default: '<span class="color--red">*</span> Пользователь или компания',
     },
     placeholder: {
       type: String,
-      default: '',
+      default: 'Введите имя пользователя или компании',
     },
     url: {
       type: String,
-      default: '',
+      default: 'https://habr.com/kek/v2/publication/suggest-mention',
     },
     param: {
       type: String,
-      default: '',
+      default: 'q',
     },
   },
   data() {
