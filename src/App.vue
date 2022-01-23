@@ -1,6 +1,11 @@
 <template>
   <div id="app" role="main">
-    <Suggests />
+    <Suggests
+      label="<span class='color--red'>*</span> Пользователь или компания"
+      placeholder="Введите имя пользователя или компании"
+      url="https://habr.com/kek/v2/publication/suggest-mention"
+      param="q"
+    />
   </div>
 </template>
 

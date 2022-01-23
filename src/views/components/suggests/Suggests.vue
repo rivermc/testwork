@@ -33,17 +33,31 @@ import Suggest from '@/models/Suggest'
 export default {
   name: 'Suggest',
   components: { SuggestsList, SuggestSearch, Loader },
+  props: {
+    label: {
+      type: String,
+      default: '',
+    },
+    placeholder: {
+      type: String,
+      default: '',
+    },
+    url: {
+      type: String,
+      default: '',
+    },
+    param: {
+      type: String,
+      default: '',
+    },
+  },
   data() {
     return {
-      status: null,
+      status: '',
       error: '',
       search: '',
       suggests: [],
       selected: [],
-      url: 'https://habr.com/kek/v2/publication/suggest-mention',
-      label: '<span class="color--red">*</span> Пользователь или компания',
-      placeholder: 'Введите имя пользователя или компании',
-      param: 'q',
       timeout: null,
       xhr: new XMLHttpRequest(),
     }

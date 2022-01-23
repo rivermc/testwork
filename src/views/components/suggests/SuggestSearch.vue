@@ -56,19 +56,19 @@ export default {
   props: {
     search: {
       type: String,
-      default: null
+      default: '',
     },
     label: {
       type: String,
-      default: ''
+      default: '',
     },
     placeholder: {
       type: String,
-      default: ''
+      default: '',
     },
     tags: {
       type: Array,
-      default: null
+      default: () => [],
     },
     valid: {
       type: String,
